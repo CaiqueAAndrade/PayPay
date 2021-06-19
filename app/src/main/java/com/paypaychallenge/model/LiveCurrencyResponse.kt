@@ -1,5 +1,6 @@
 package com.paypaychallenge.model
 
+
 data class LiveCurrencyResponse(
     val success: Boolean,
     val terms: String,

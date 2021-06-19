@@ -1,11 +1,14 @@
 package com.paypaychallenge.extensions
 
-import java.lang.Exception
-
 fun String.currencyToDouble(): Double {
     return try {
-        this.replace("""[$,]""".toRegex(), "").toDouble()
+        val formattedValue = this.toNumericString()
+        (formattedValue.substring(0, formattedValue.length - 2)
+                + "."
+                + formattedValue.substring(formattedValue.length - 2)).toDouble()
     } catch (e: Exception) {
         0.0
     }
 }
+
+fun String.toNumericString() = this.filter { it.isDigit() }

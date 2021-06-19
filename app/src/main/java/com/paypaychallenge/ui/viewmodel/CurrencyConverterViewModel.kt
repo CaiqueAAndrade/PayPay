@@ -38,7 +38,7 @@ class CurrencyConverterViewModel(
             when (val response = repository.getLiveCurrency()) {
                 is Result.Success -> {
                     response.data?.let { liveCurrencyLiveData ->
-
+                        repository.insert(liveCurrencyLiveData)
                         val currencies = arrayListOf<String>()
                         currencies.add("USD")
 

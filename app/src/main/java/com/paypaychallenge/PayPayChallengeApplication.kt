@@ -4,9 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import com.paypaychallenge.data.remote.InternetConnectionListener
-import com.paypaychallenge.di.networkModule
-import com.paypaychallenge.di.repositoryModule
-import com.paypaychallenge.di.viewModelModule
+import com.paypaychallenge.di.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -22,7 +20,9 @@ class PayPayChallengeApplication: Application(), InternetConnectionListener{
                 listOf(
                     repositoryModule,
                     viewModelModule,
-                    networkModule
+                    networkModule,
+                    daoModule,
+                    preferencesModule
                 )
             )
         }

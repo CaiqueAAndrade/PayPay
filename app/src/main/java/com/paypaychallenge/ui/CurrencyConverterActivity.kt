@@ -16,12 +16,14 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.paypaychallenge.R
 import com.paypaychallenge.databinding.ActivityCurrencyConverterBinding
 import com.paypaychallenge.extensions.currencyToDouble
+import com.paypaychallenge.extensions.toNumericString
 import com.paypaychallenge.model.Quote
 import com.paypaychallenge.ui.viewmodel.CurrencyConverterViewModel
 import com.paypaychallenge.util.EventObserver
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.NumberFormat
+import java.util.*
 
 
 class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
@@ -34,6 +36,7 @@ class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelecte
         parametersOf()
     }
     private var currentCurrencyCode = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,9 +68,7 @@ class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelecte
                             if (s.toString() != current) {
                                 etInputValueToExchange.removeTextChangedListener(this)
 
-                                val cleanString: String = s.replace("""[$,.]""".toRegex(), "")
-
-                                val parsed = cleanString.toDouble()
+                                val parsed = s.toString().toNumericString().toDouble()
                                 val formatted =
                                     NumberFormat.getCurrencyInstance().format((parsed / 100))
                                 current = formatted
