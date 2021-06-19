@@ -6,10 +6,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.paypaychallenge.data.remote.Result
-import com.paypaychallenge.model.LiveCurrencyResponse
 import com.paypaychallenge.model.Quote
 import com.paypaychallenge.repository.CurrencyConverterRepository
 import com.paypaychallenge.util.Event
+import com.paypaychallenge.util.Utils
 import kotlinx.coroutines.launch
 
 class CurrencyConverterViewModel(
@@ -17,10 +17,8 @@ class CurrencyConverterViewModel(
     private val repository: CurrencyConverterRepository
 ) : AndroidViewModel(mApplication) {
 
-
-    private val _liveCurrencyMutableLiveData = MutableLiveData<Event<LiveCurrencyResponse>>()
-    val liveCurrencyLiveData: LiveData<Event<LiveCurrencyResponse>>
-        get() = _liveCurrencyMutableLiveData
+    private var quotesToMap: Map<String, Double> = mutableMapOf()
+    private var quotesToArray: List<Quote> = arrayListOf()
 
     private val _errorMutableLiveData = MutableLiveData<Event<Unit>>()
     val errorLiveData: LiveData<Event<Unit>>
@@ -55,9 +53,11 @@ class CurrencyConverterViewModel(
                             }
                         }
 
+                        quotesToMap = liveCurrencyLiveData.quotes
+                        quotesToArray = quotes
+
                         _quotesMutableLiveData.value = Event(quotes)
                         _currenciesMutableLiveData.value = Event(currencies)
-                        _liveCurrencyMutableLiveData.value = Event(liveCurrencyLiveData)
                     }
                 }
                 is Result.Failure -> {
@@ -69,4 +69,11 @@ class CurrencyConverterViewModel(
             }
         }
     }
+
+    fun getExchangedValueFromCurrency(currencyCode: String, selectedValue: Double) {
+        val convertedQuotes =
+            Utils.getExchangedQuotesList(currencyCode, quotesToMap, quotesToArray, selectedValue)
+        _quotesMutableLiveData.value = Event(convertedQuotes)
+    }
+
 }

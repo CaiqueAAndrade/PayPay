@@ -2,6 +2,8 @@ package com.paypaychallenge.ui
 
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -13,11 +15,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
 import com.paypaychallenge.R
 import com.paypaychallenge.databinding.ActivityCurrencyConverterBinding
+import com.paypaychallenge.extensions.currencyToDouble
 import com.paypaychallenge.model.Quote
 import com.paypaychallenge.ui.viewmodel.CurrencyConverterViewModel
 import com.paypaychallenge.util.EventObserver
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
+import java.text.NumberFormat
 
 
 class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
@@ -25,10 +29,11 @@ class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelecte
 
     private lateinit var binding: ActivityCurrencyConverterBinding
 
-    private val adapter = QuotesRecyclerViewAdapter(this, this)
+    private val adapter = QuotesRecyclerViewAdapter(this)
     private val viewModel by viewModel<CurrencyConverterViewModel> {
         parametersOf()
     }
+    private var currentCurrencyCode = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,15 +45,49 @@ class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelecte
             window.statusBarColor = ContextCompat.getColor(this, android.R.color.white)
         }
 
-        binding.rvExchangedCurrencyList.layoutManager = GridLayoutManager(this, 3)
+        setupView()
         viewModel.getLiveCurrency()
         subscribe()
     }
 
+    private fun setupView() {
+        binding.apply {
+            rvExchangedCurrencyList.layoutManager =
+                GridLayoutManager(this@CurrencyConverterActivity, 2)
+
+            etInputValueToExchange.addTextChangedListener(
+                object : TextWatcher {
+                    var current = ""
+                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+                    override fun afterTextChanged(s: Editable?) {}
+                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                        p0?.let { s ->
+                            if (s.toString() != current) {
+                                etInputValueToExchange.removeTextChangedListener(this)
+
+                                val cleanString: String = s.replace("""[$,.]""".toRegex(), "")
+
+                                val parsed = cleanString.toDouble()
+                                val formatted =
+                                    NumberFormat.getCurrencyInstance().format((parsed / 100))
+                                current = formatted
+                                etInputValueToExchange.setText(formatted)
+                                etInputValueToExchange.setSelection(formatted.length)
+                                etInputValueToExchange.addTextChangedListener(this)
+
+                                viewModel.getExchangedValueFromCurrency(
+                                    currentCurrencyCode,
+                                    formatted.toString().currencyToDouble()
+                                )
+                            }
+                        }
+                    }
+                }
+            )
+        }
+    }
+
     private fun subscribe() {
-        viewModel.liveCurrencyLiveData.observe(this, EventObserver {
-//            binding.tvCurrency.text = it.timestamp.toString()
-        })
 
         viewModel.currenciesLiveData.observe(this, EventObserver {
             val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
@@ -61,7 +100,7 @@ class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelecte
         })
 
         viewModel.quoteMutableLiveData.observe(this, EventObserver {
-            adapter.setData(it)
+            adapter.setData(it, getSelectedValue())
             binding.rvExchangedCurrencyList.adapter = adapter
         })
 
@@ -71,7 +110,16 @@ class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelecte
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        Toast.makeText(this, p0?.getItemAtPosition(p2).toString(), Toast.LENGTH_SHORT).show()
+        currentCurrencyCode = p0?.getItemAtPosition(p2).toString()
+        viewModel.getExchangedValueFromCurrency(currentCurrencyCode, getSelectedValue())
+    }
+
+    private fun getSelectedValue(): Double {
+        return if (binding.etInputValueToExchange.text.toString() != "") {
+            binding.etInputValueToExchange.text.toString().currencyToDouble()
+        } else {
+            1.0
+        }
     }
 
     override fun onNothingSelected(p0: AdapterView<*>?) {}

@@ -12,18 +12,19 @@ import com.paypaychallenge.extensions.roundUpToCurrency
 import com.paypaychallenge.model.Quote
 
 class QuotesRecyclerViewAdapter(
-    val context: Context,
     val listener: QuoteItemClickListener
 ) : RecyclerView.Adapter<QuotesRecyclerViewAdapter.QuotesViewHolder>() {
 
     private var items: List<Quote> = arrayListOf()
+    private var selectedValue: Double = 0.0
 
     interface QuoteItemClickListener {
         fun quotesItemClickListener(quote: Quote)
     }
 
-    fun setData(quotes: List<Quote>) {
+    fun setData(quotes: List<Quote>, selectedValue: Double) {
         this.items = quotes
+        this.selectedValue = selectedValue
         notifyDataSetChanged()
     }
 
@@ -59,8 +60,7 @@ class QuotesRecyclerViewAdapter(
 
         fun bind(quote: Quote) {
             binding.apply {
-                tvCurrencyCode.text = quote.currencyCode
-                tvCurrencyValue.text = quote.currencyValue.roundUpToCurrency(quote.currencyCode)
+                qicQuoteCard.setupLayout(quote, selectedValue)
             }
         }
 
