@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.paypaychallenge.R
 import com.paypaychallenge.data.remote.Result
 import com.paypaychallenge.model.Quote
 import com.paypaychallenge.repository.CurrencyConverterRepository
@@ -20,8 +21,8 @@ class CurrencyConverterViewModel(
     private var quotesToMap: Map<String, Double> = mutableMapOf()
     private var quotesToArray: List<Quote> = arrayListOf()
 
-    private val _errorMutableLiveData = MutableLiveData<Event<Unit>>()
-    val errorLiveData: LiveData<Event<Unit>>
+    private val _errorMutableLiveData = MutableLiveData<Event<String>>()
+    val errorLiveData: LiveData<Event<String>>
         get() = _errorMutableLiveData
 
     private val _currenciesMutableLiveData = MutableLiveData<Event<List<String>>>()
@@ -61,10 +62,17 @@ class CurrencyConverterViewModel(
                     }
                 }
                 is Result.Failure -> {
-                    _errorMutableLiveData.value = Event(Unit)
+                    val errorMessage =
+                        getApplication<Application>().resources.getString(R.string.network_error_message)
+                    _errorMutableLiveData.value =
+                        Event(errorMessage.replace("%a", response.statusCode.toString()))
                 }
                 is Result.NetworkError -> {
-                    _errorMutableLiveData.value = Event(Unit)
+                    val errorMessage =
+                        getApplication<Application>().resources.getString(R.string.network_error_message)
+                    val internetError =
+                        getApplication<Application>().resources.getString(R.string.internet_error_description)
+                    _errorMutableLiveData.value = Event(errorMessage.replace("%a", internetError))
                 }
             }
         }

@@ -4,5 +4,7 @@
     <string name="currency_converter_title">Currency Exchanger</string>
     <string name="exchange_example_value_hint">$ 1.00</string>
     <string name="value_status_icon">Value status</string>
-    <string name="inset_value_widget_card_description">Inset a value and select a currency</string>
+    <string name="inset_value_widget_card_description">Insert a value and select a currency</string>
+    <string name="network_error_message">Sorry, something went wrong :( \nError: %a</string>
+    <string name="internet_error_description">Internet Connection error</string>
 </resources>

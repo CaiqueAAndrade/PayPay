@@ -8,7 +8,7 @@ import com.paypaychallenge.di.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
-class PayPayChallengeApplication: Application(), InternetConnectionListener{
+class PayPayChallengeApplication : Application() {
 
     private lateinit var internetConnectionListener: InternetConnectionListener
 
@@ -26,8 +26,6 @@ class PayPayChallengeApplication: Application(), InternetConnectionListener{
                 )
             )
         }
-
-        setInternetConnectionListener(this)
     }
 
     fun isInternetAvailable(): Boolean {
@@ -37,13 +35,13 @@ class PayPayChallengeApplication: Application(), InternetConnectionListener{
         return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 
-    private fun setInternetConnectionListener(listener: InternetConnectionListener) {
-        this.internetConnectionListener = listener
-    }
-
-    override fun onInternetUnavailable() {
+    fun onInternetUnavailable() {
         if (this::internetConnectionListener.isInitialized) {
             internetConnectionListener.onInternetUnavailable()
         }
+    }
+
+    fun setInternetConnectionListener(listener: InternetConnectionListener) {
+        this.internetConnectionListener = listener
     }
 }

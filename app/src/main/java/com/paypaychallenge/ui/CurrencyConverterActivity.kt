@@ -14,7 +14,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.snackbar.Snackbar
+import com.paypaychallenge.PayPayChallengeApplication
 import com.paypaychallenge.R
+import com.paypaychallenge.data.remote.InternetConnectionListener
 import com.paypaychallenge.databinding.ActivityCurrencyConverterBinding
 import com.paypaychallenge.extensions.currencyToDouble
 import com.paypaychallenge.extensions.toNumericString
@@ -27,10 +30,12 @@ import java.text.NumberFormat
 import java.util.*
 
 class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
-    QuotesRecyclerViewAdapter.QuoteItemClickListener {
+    QuotesRecyclerViewAdapter.QuoteItemClickListener, InternetConnectionListener {
 
     private lateinit var binding: ActivityCurrencyConverterBinding
 
+    private lateinit var paypayApplication: PayPayChallengeApplication
+    private lateinit var internetConnectionListener: InternetConnectionListener
     private val adapter = QuotesRecyclerViewAdapter(this)
     private val viewModel by viewModel<CurrencyConverterViewModel> {
         parametersOf()
@@ -41,16 +46,22 @@ class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_currency_converter)
-
+        paypayApplication = application as PayPayChallengeApplication
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val wic = WindowInsetsControllerCompat(window, window.decorView)
             wic.isAppearanceLightStatusBars = true
             window.statusBarColor = ContextCompat.getColor(this, android.R.color.white)
         }
 
+        setInternetConnectionListener(this)
         setupView()
         viewModel.getLiveCurrency()
         subscribe()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        paypayApplication.setInternetConnectionListener(this)
     }
 
     private fun setupView() {
@@ -111,12 +122,14 @@ class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelecte
         })
 
         viewModel.quoteMutableLiveData.observe(this, EventObserver {
+            binding.etInputValueToExchange.isEnabled = true
             adapter.setData(it, getSelectedValue())
             isLoading(isLoading = false)
         })
 
         viewModel.errorLiveData.observe(this, EventObserver {
-            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show()
+            binding.etInputValueToExchange.isEnabled = false
+            Snackbar.make(findViewById(android.R.id.content), it, Snackbar.LENGTH_SHORT).show()
         })
     }
 
@@ -151,6 +164,16 @@ class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelecte
                 rvExchangedCurrencyList.visibility = View.VISIBLE
             }
         }
+    }
+
+    override fun onInternetUnavailable() {
+        if (this::internetConnectionListener.isInitialized) {
+            internetConnectionListener.onInternetUnavailable()
+        }
+    }
+
+    private fun setInternetConnectionListener(listener: InternetConnectionListener) {
+        this.internetConnectionListener = listener
     }
 
     override fun onBackPressed() {

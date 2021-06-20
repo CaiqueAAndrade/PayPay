@@ -29,13 +29,20 @@ class CurrencyConverterRepository(
     suspend fun getLiveCurrency(): Result<LiveCurrencyResponse> {
         return if (hasPassedThirtyMinutes()) {
             setupApiCallTimer()
-            return service.getLiveDollarsCurrency(
+            service.getLiveDollarsCurrency(
                 Constants.ASSESS_KEY
             )
         } else {
             liveCurrencyDao = currencyDao.getLiveCurrency()
-            val liveCurrencyResponse = Utils.stringToLiveCurrency(liveCurrencyDao.liveCurrency)
-            Result.Success(liveCurrencyResponse)
+            if (this::liveCurrencyDao.isInitialized.not()) {
+                setupApiCallTimer()
+                service.getLiveDollarsCurrency(
+                    Constants.ASSESS_KEY
+                )
+            } else {
+                val liveCurrencyResponse = Utils.stringToLiveCurrency(liveCurrencyDao.liveCurrency)
+                Result.Success(liveCurrencyResponse)
+            }
         }
     }
 
