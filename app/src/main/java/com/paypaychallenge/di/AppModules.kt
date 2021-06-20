@@ -40,7 +40,6 @@ val daoModule = module {
             CurrencyDatabase::class.java,
             Constants.Room.CURRENCY_DATABASE_NAME
         )
-            .allowMainThreadQueries()
             .build()
     }
     single { get<CurrencyDatabase>().currencyDao() }

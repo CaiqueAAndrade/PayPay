@@ -7,8 +7,8 @@ import com.paypaychallenge.data.local.CurrencyDao
 import com.paypaychallenge.data.remote.CurrencyLayerApi
 import com.paypaychallenge.data.remote.Result
 import com.paypaychallenge.extensions.plusThirtyMinutes
-import com.paypaychallenge.model.LiveCurrencyDao
 import com.paypaychallenge.model.LiveCurrencyResponse
+import com.paypaychallenge.model.LiveCurrencyToJsonString
 import com.paypaychallenge.util.Constants
 import com.paypaychallenge.util.Utils
 import org.koin.android.ext.android.inject
@@ -24,7 +24,7 @@ class CurrencyConverterRepository(
     private val prefs: SharedPreferences by mApplication.inject()
     private var editor: SharedPreferences.Editor = prefs.edit()
     private val calendar = Calendar.getInstance()
-    private lateinit var liveCurrencyDao: LiveCurrencyDao
+    private lateinit var liveCurrencyToJsonString: LiveCurrencyToJsonString
 
     suspend fun getLiveCurrency(): Result<LiveCurrencyResponse> {
         return if (hasPassedThirtyMinutes()) {
@@ -33,16 +33,10 @@ class CurrencyConverterRepository(
                 Constants.ASSESS_KEY
             )
         } else {
-            liveCurrencyDao = currencyDao.getLiveCurrency()
-            if (this::liveCurrencyDao.isInitialized.not()) {
-                setupApiCallTimer()
-                service.getLiveDollarsCurrency(
-                    Constants.ASSESS_KEY
-                )
-            } else {
-                val liveCurrencyResponse = Utils.stringToLiveCurrency(liveCurrencyDao.liveCurrency)
-                Result.Success(liveCurrencyResponse)
-            }
+            liveCurrencyToJsonString = currencyDao.getLiveCurrency()
+            val liveCurrencyResponse =
+                Utils.stringToLiveCurrency(liveCurrencyToJsonString.liveCurrency)
+            Result.Success(liveCurrencyResponse)
         }
     }
 
@@ -60,7 +54,7 @@ class CurrencyConverterRepository(
     @WorkerThread
     suspend fun insert(liveCurrencyResponse: LiveCurrencyResponse) {
         val liveCurrencyToString = Utils.liveCurrencyToString(liveCurrencyResponse)
-        val liveCurrencyDao = LiveCurrencyDao(0, liveCurrencyToString)
+        val liveCurrencyDao = LiveCurrencyToJsonString(0, liveCurrencyToString)
         currencyDao.deleteAll()
         currencyDao.insert(liveCurrencyDao)
     }
