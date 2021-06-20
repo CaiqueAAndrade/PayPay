@@ -67,8 +67,11 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.okhttp3Version"
     implementation "com.squareup.okhttp3:okhttp-urlconnection:$rootProject.okhttp3Version"
 
-    // Room components
+    // Room
     implementation "androidx.room:room-ktx:$rootProject.roomVersion"
     kapt "androidx.room:room-compiler:$rootProject.roomVersion"
     androidTestImplementation "androidx.room:room-testing:$rootProject.roomVersion"
+
+    // Facebook
+    implementation "com.facebook.shimmer:shimmer:$rootProject.shimmerVersion"
 }

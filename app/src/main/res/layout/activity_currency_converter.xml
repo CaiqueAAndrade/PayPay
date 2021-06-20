@@ -12,7 +12,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:text="@string/currency_converter_title"
-            android:textColor="@color/gray_5C5C5C"
+            android:textColor="@color/heavy_gray"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -43,6 +43,45 @@
             app:layout_constraintEnd_toEndOf="@+id/et_input_value_to_exchange"
             app:layout_constraintTop_toBottomOf="@+id/et_input_value_to_exchange" />
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_currency_code_loader"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="4dp"
+            android:background="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/sp_currency_selection"
+            app:layout_constraintEnd_toEndOf="@+id/sp_currency_selection"
+            app:layout_constraintStart_toStartOf="@+id/sp_currency_selection"
+            app:layout_constraintTop_toTopOf="@+id/sp_currency_selection">
+
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:shimmer_duration="800">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_rounded_purple"/>
+
+            </com.facebook.shimmer.ShimmerFrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_insert_value_widget"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/bg_rounded_purple"
+            android:gravity="center"
+            android:text="@string/inset_value_widget_card_description"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/sp_currency_selection"
+            app:layout_constraintStart_toStartOf="@+id/et_input_value_to_exchange"
+            app:layout_constraintTop_toBottomOf="@+id/et_input_value_to_exchange" />
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -50,16 +89,20 @@
             android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="8dp"
             android:theme="@style/Theme.MaterialComponents.Light"
+            app:cardCornerRadius="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sp_currency_selection"
-            app:strokeColor="@color/gray_5C5C5C"
+            app:strokeColor="@color/heavy_gray"
             app:strokeWidth="1dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
+                <include
+                    android:id="@+id/layout_quotes_loader"
+                    layout="@layout/custom_quotes_loader"/>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_exchanged_currency_list"

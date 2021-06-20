@@ -2,6 +2,7 @@ package com.paypaychallenge.ui
 
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -24,7 +25,6 @@ import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.NumberFormat
 import java.util.*
-
 
 class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
     QuotesRecyclerViewAdapter.QuoteItemClickListener {
@@ -57,16 +57,20 @@ class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelecte
         binding.apply {
             rvExchangedCurrencyList.layoutManager =
                 GridLayoutManager(this@CurrencyConverterActivity, 2)
+            binding.rvExchangedCurrencyList.adapter = adapter
 
             etInputValueToExchange.addTextChangedListener(
                 object : TextWatcher {
                     var current = ""
+                    var timer: CountDownTimer? = null
                     override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                     override fun afterTextChanged(s: Editable?) {}
                     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                         p0?.let { s ->
                             if (s.toString() != current) {
                                 etInputValueToExchange.removeTextChangedListener(this)
+
+                                isLoading(isLoading = true)
 
                                 val parsed = s.toString().toNumericString().toDouble()
                                 val formatted =
@@ -76,10 +80,16 @@ class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelecte
                                 etInputValueToExchange.setSelection(formatted.length)
                                 etInputValueToExchange.addTextChangedListener(this)
 
-                                viewModel.getExchangedValueFromCurrency(
-                                    currentCurrencyCode,
-                                    formatted.toString().currencyToDouble()
-                                )
+                                timer?.cancel()
+                                timer = object : CountDownTimer(1000, 1500) {
+                                    override fun onTick(millisUntilFinished: Long) {}
+                                    override fun onFinish() {
+                                        viewModel.getExchangedValueFromCurrency(
+                                            currentCurrencyCode,
+                                            formatted.toString().currencyToDouble()
+                                        )
+                                    }
+                                }.start()
                             }
                         }
                     }
@@ -102,7 +112,7 @@ class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelecte
 
         viewModel.quoteMutableLiveData.observe(this, EventObserver {
             adapter.setData(it, getSelectedValue())
-            binding.rvExchangedCurrencyList.adapter = adapter
+            isLoading(isLoading = false)
         })
 
         viewModel.errorLiveData.observe(this, EventObserver {
@@ -127,5 +137,24 @@ class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelecte
 
     override fun quotesItemClickListener(quote: Quote) {
         Toast.makeText(this, quote.currencyCode, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun isLoading(isLoading: Boolean) {
+        binding.apply {
+            if (isLoading) {
+                clCurrencyCodeLoader.visibility = View.VISIBLE
+                layoutQuotesLoader.root.visibility = View.VISIBLE
+                rvExchangedCurrencyList.visibility = View.GONE
+            } else {
+                clCurrencyCodeLoader.visibility = View.GONE
+                layoutQuotesLoader.root.visibility = View.GONE
+                rvExchangedCurrencyList.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
     }
 }

@@ -39,7 +39,7 @@ class QuoteItemCustom @JvmOverloads constructor(
                 valueStatusIcon.setImageResource(R.drawable.ic_arrow_down)
             }
             quote.currencyValue == selectedValue -> {
-                background.strokeColor = ContextCompat.getColor(context, R.color.gray_5C5C5C)
+                background.strokeColor = ContextCompat.getColor(context, R.color.heavy_gray)
                 valueStatusIcon.setImageResource(R.drawable.ic_minus)
             }
             else -> {

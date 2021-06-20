@@ -4,7 +4,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/black</item>
         <item name="colorAccent">@color/colorPrimaryDark</item>
-        <item name="background">@color/gray_E8E8E8</item>
+        <item name="background">@color/light_gray</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
