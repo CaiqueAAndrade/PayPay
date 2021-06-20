@@ -1,5 +1,5 @@
 
-# PayPay Coding Challange
+# PayPay Coding Challenge
 
 Android application that shows live exchanges in US Dollar and on user input calculate locally different exchanged currencies.
 
@@ -13,7 +13,7 @@ git clone https://github.com/CaiqueAAndrade/PayPay.git
 
 ### Architecture:
 
-Project developed using MVVM architecture with DataBinding from Google Android JatPack: 
+Project developed using MVVM architecture with DataBinding from Google Android JetPack: 
 Create `app/build.gradle.app` with the following info:
 ```gradle
 buildFeatures {
