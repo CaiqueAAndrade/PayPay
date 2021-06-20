@@ -14,6 +14,7 @@ git clone https://github.com/CaiqueAAndrade/PayPay.git
 ### Architecture:
 
 Project developed using MVVM architecture with DataBinding from Google Android JetPack: 
+
 Create `app/build.gradle.app` with the following info:
 ```gradle
 buildFeatures {
@@ -37,7 +38,7 @@ implementation "org.koin:koin-android-viewmodel:$rootProject.koinVersion"
 
 
 ## Data Repository:
-Used Retrofit2 to fetch data from API and Room to persist data locally in the application:
+Using Retrofit2 to fetch data from API and Room to persist data locally on the device:
 
 ```gradle
 // Retrofit
@@ -56,7 +57,7 @@ androidTestImplementation "androidx.room:room-testing:$rootProject.roomVersion"
 - `roomVersion = '2.3.0'`
 
 ## Coding style
-The project used a variety of features to improve code quality and make it easy to maintain, as with:
+The project using a variety of features to improve code quality and make it easy to maintain, as with:
  - Android extensions to in an easy way modify values.
  - CustomView to encapsulate view behavior and reuse if necessary in other parts of the application.
  - Custom retrofit call that returns results as Success, Failure, and Network Failure to intercept API calls in an easy way.
@@ -65,7 +66,7 @@ The project used a variety of features to improve code quality and make it easy 
 
 ## Notice
 
-My free plan in CurrencyLayer API didn’t have access to the `Convert` API, so I had to use `Live` API that only got exchanges in USD. After that, I had to exchange to other currencies locally.
+My free plan in CurrencyLayer API didn’t have access to the `Convert` API, so I had to use `Live` API that only provides exchanges in USD. After that, I had to convert to other currencies manually.
 
 With the free plan my account only have 250 calls por month, so if it runs out please use my mock API call instead.
 
