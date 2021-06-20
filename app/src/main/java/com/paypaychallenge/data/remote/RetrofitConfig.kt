@@ -47,8 +47,11 @@ fun provideOkHttpClient(context: Context): OkHttpClient.Builder {
 }
 
 fun provideServiceCurrencyLayer(client: OkHttpClient.Builder): CurrencyLayerApi {
+    // In case that currencylayer.com exceed number of calls use my apiary mock to test
+    // Just change the .baseUrl to the line bellow
+    //        .baseUrl("https://private-7021a4-currencylayer.apiary-mock.com/")
     val retrofit = Retrofit.Builder()
-        .baseUrl("https://private-7021a4-currencylayer.apiary-mock.com/")
+        .baseUrl("http://api.currencylayer.com/")
         .addCallAdapterFactory(CallAdapterFactory())
         .addConverterFactory(MoshiConverterFactory.create())
         .client(client.build())

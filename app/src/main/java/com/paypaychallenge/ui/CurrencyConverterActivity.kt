@@ -23,7 +23,7 @@ import com.paypaychallenge.extensions.currencyToDouble
 import com.paypaychallenge.extensions.toNumericString
 import com.paypaychallenge.model.Quote
 import com.paypaychallenge.ui.viewmodel.CurrencyConverterViewModel
-import com.paypaychallenge.util.EventObserver
+import com.paypaychallenge.data.remote.EventObserver
 import org.koin.android.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 import java.text.NumberFormat
@@ -85,7 +85,7 @@ class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelecte
 
                                 val parsed = s.toString().toNumericString().toDouble()
                                 val formatted =
-                                    NumberFormat.getCurrencyInstance().format((parsed / 100))
+                                    NumberFormat.getCurrencyInstance(Locale.US).format((parsed / 100))
                                 current = formatted
                                 etInputValueToExchange.setText(formatted)
                                 etInputValueToExchange.setSelection(formatted.length)
@@ -149,7 +149,7 @@ class CurrencyConverterActivity : AppCompatActivity(), AdapterView.OnItemSelecte
     override fun onNothingSelected(p0: AdapterView<*>?) {}
 
     override fun quotesItemClickListener(quote: Quote) {
-        Toast.makeText(this, quote.currencyCode, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "${quote.currencyCode}\n${quote.currencyValue}", Toast.LENGTH_SHORT).show()
     }
 
     private fun isLoading(isLoading: Boolean) {

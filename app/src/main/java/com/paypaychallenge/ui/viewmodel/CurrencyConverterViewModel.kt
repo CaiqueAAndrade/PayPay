@@ -9,7 +9,7 @@ import com.paypaychallenge.R
 import com.paypaychallenge.data.remote.Result
 import com.paypaychallenge.model.Quote
 import com.paypaychallenge.repository.CurrencyConverterRepository
-import com.paypaychallenge.util.Event
+import com.paypaychallenge.data.remote.Event
 import com.paypaychallenge.util.Utils
 import kotlinx.coroutines.launch
 

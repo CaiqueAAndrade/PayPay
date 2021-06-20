@@ -1,6 +1,5 @@
 package com.paypaychallenge.ui
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +7,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.paypaychallenge.R
 import com.paypaychallenge.databinding.ItemQuoteBinding
-import com.paypaychallenge.extensions.roundUpToCurrency
 import com.paypaychallenge.model.Quote
 
 class QuotesRecyclerViewAdapter(
@@ -53,7 +51,7 @@ class QuotesRecyclerViewAdapter(
     override fun getItemCount(): Int = items.size
 
     inner class QuotesViewHolder(private val binding: ItemQuoteBinding) :
-            RecyclerView.ViewHolder(binding.root), View.OnClickListener {
+        RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         init {
             binding.root.setOnClickListener(this)
         }

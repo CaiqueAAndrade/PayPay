@@ -1,11 +1,9 @@
 package com.paypaychallenge.extensions
 
+
 fun String.currencyToDouble(): Double {
     return try {
-        val formattedValue = this.toNumericString()
-        (formattedValue.substring(0, formattedValue.length - 2)
-                + "."
-                + formattedValue.substring(formattedValue.length - 2)).toDouble()
+        this.replace(("[^\\d.]").toRegex(), "").toDouble()
     } catch (e: Exception) {
         0.0
     }

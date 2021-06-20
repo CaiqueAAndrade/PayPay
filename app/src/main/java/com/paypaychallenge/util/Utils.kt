@@ -47,7 +47,7 @@ object Utils {
         return true
     }
 
-    fun stringToLiveCurrency(value: String): LiveCurrencyResponse {
+    fun stringToLiveCurrency(value: String): LiveCurrencyResponse? {
         return Gson().fromJson(value, object : TypeToken<LiveCurrencyResponse>() {}.type)
     }
 

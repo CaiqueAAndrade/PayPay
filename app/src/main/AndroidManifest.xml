@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.paypaychallenge">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -13,7 +14,9 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_banknote"
         android:supportsRtl="true"
-        android:theme="@style/Theme.PayPayChallenge">
+        android:theme="@style/Theme.PayPayChallenge"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="m">
 
         <activity android:name=".ui.SplashScreenActivity"
             android:theme="@style/AppTheme.Launcher" >

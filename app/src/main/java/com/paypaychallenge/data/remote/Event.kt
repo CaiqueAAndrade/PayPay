@@ -1,4 +1,4 @@
-package com.paypaychallenge.util
+package com.paypaychallenge.data.remote
 
 import androidx.lifecycle.Observer
 
